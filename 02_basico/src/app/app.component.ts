@@ -15,7 +15,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(){
-    // this.chatService.sendMessage('Hola mundo desde angular');
+     this.chatService.getMessagesPrivate()
+         .subscribe(res =>{ console.log(res)});
   }
 
 

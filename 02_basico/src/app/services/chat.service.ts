@@ -9,12 +9,10 @@ export class ChatService {
   constructor(private websocketService : WebsocketService) { }
 
   sendMessage(mensaje:string){
-
     const data = {
-      de:'Julio cesar',
+      de: this.websocketService.getUsuario().nombre,
       cuerpo: mensaje
     }
-
     this.websocketService.emitirEventos('mensaje', data)
   }
 
@@ -23,6 +21,11 @@ export class ChatService {
     return this.websocketService.escucharEventos('mensaje-nuevo');
   }
 
+
+  getMessagesPrivate(){
+    return this.websocketService.escucharEventos('mensaje-privado');
+  }
+ 
 
 
 }

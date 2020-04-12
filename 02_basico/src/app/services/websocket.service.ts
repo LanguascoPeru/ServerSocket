@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
-
+import { Usuario } from '../models/usuario.model';
+ 
+ 
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketService {
 
   public socketStatus = false;
+  public usuario: Usuario;
 
   constructor(private socket: Socket) { 
-   this.checkStatus();
+    this.leerStorageUser();
+    this.checkStatus();
   }
 
   checkStatus(){
@@ -24,12 +28,49 @@ export class WebsocketService {
     })
   }
 
-  emitirEventos(evento:string, payload ?:any, callback?:any){  
+  emitirEventos(evento:string, payload ?:any, callback?:Function){  /// emit
       this.socket.emit(evento,payload, callback);
   }
 
-  escucharEventos(evento:string){  
+  escucharEventos(evento:string){   /// on 
     return this.socket.fromEvent(evento);
   }
+
+
+  getUsuario(){
+    return this.usuario;
+  }
+
+  loginWebSocket( nombre :string){
+    //como no sabemos cuando termina el socket lo metemos dentro de una promesa
+    return new Promise((resolve, reject) => {
+      
+      this.emitirEventos('configurar-usuario',  {nombre:nombre} , (resp)=>{ 
+        if (resp.ok==true) {
+          this.usuario = new Usuario(nombre);
+          this.guardarStorageUser();
+          resolve(true);
+        }else{
+          reject(false);
+        }  
+
+      })
+
+    })
+
+  }
+ 
+  /// lo almacenamos en el local storge para tener persistente la informacion
+  guardarStorageUser(){
+    localStorage.setItem('usuario', JSON.stringify( this.usuario))
+  }
+
+  leerStorageUser(){
+    if (localStorage.getItem('usuario')) {
+      this.usuario = JSON.parse(localStorage.getItem('usuario'));
+    }
+  }
+
+
 
 }

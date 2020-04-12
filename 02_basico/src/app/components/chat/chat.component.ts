@@ -13,6 +13,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   texto :string="";
   mensajeSubcription :Subscription;
+  mensajeTodosSubcription :Subscription;
   mensajes:any[] = [];
   elemento:HTMLElement;
 
@@ -36,6 +37,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.mensajeSubcription.unsubscribe();
+    this.mensajeTodosSubcription.unsubscribe();
   }
 
   enviar(){   
