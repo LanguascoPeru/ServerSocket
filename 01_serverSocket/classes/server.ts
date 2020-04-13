@@ -39,13 +39,13 @@ export default class Server {
         this.io.on('connection', cliente=>{       
 
             // conecta client
-            socketCliente.conectarCliente( cliente )
+            socketCliente.conectarCliente( cliente , this.io)
             
-            socketCliente.configurarUsuario(cliente, this.io);                    
-           
+            socketCliente.configurarUsuario(cliente, this.io);     
+                    
             socketCliente.mensajes(cliente, this.io);         
             
-            socketCliente.desconectar(cliente);
+            socketCliente.desconectar(cliente, this.io);
         })
 
 

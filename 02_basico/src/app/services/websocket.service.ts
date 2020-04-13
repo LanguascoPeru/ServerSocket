@@ -20,10 +20,16 @@ export class WebsocketService {
     this.socket.on('connect', ()=>{
       console.log('conectado al servidor');
       this.socketStatus= true;
+
+      if(this.usuario){
+        this.loginWebSocket(this.usuario.nombre)
+      }
+
     })
  
     this.socket.on('disconnect', ()=>{
       console.log('desconectado del servidor');
+
       this.socketStatus= false;
     })
   }
@@ -54,6 +60,22 @@ export class WebsocketService {
           reject(false);
         }  
 
+      })
+
+    })
+
+  }
+
+  logoutWebSocket(){
+    return new Promise((resolve, reject) => {      
+      this.emitirEventos('configurar-usuario',  {nombre:'sin nombre'} , (resp)=>{ 
+        if (resp.ok==true) {
+          this.usuario = null;
+          localStorage.removeItem('usuario');
+          resolve(true);
+        }else{
+          reject(false);
+        }  
       })
 
     })

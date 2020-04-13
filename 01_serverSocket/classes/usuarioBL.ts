@@ -9,8 +9,6 @@ export class UsuarioBL {
 
     public agregarUsuario(usuario:Usuario){
         this.listaUser.push(usuario);
-        console.log('this.listaUser');
-        console.log(this.listaUser);
         return usuario;
     }
 
@@ -25,7 +23,8 @@ export class UsuarioBL {
     }
 
     public getUsuarios(){
-        return this.listaUser;
+        return this.listaUser.filter( user => user.nombre !== 'sin nombre' );
+       // return this.listaUser;
     }
 
     public getUsuario(id : string){

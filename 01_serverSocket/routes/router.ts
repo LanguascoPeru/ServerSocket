@@ -1,5 +1,8 @@
 import { Router, Request, Response	} from 'express';
 import Server from '../classes/server';
+import { userConectados } from '../sockets/sockets';
+ 
+ 
 
 const router = Router();
 
@@ -29,6 +32,8 @@ router.post('/mensajes',( req : Request, res : Response)=>{
     })
 })
 
+
+//mandar mensajes privados---
 router.post('/mensajes/:id',( req : Request, res : Response)=>{
 
     const id = req.params.id;
@@ -52,7 +57,39 @@ router.post('/mensajes/:id',( req : Request, res : Response)=>{
 })
 
 
+// obtener los id de los usuario via socket Io
+router.get('/usuarios',( req : Request, res : Response)=>{
 
+    const server = Server.Instance;
+    server.io.sockets.clients((error :any, clientes : string[]) =>{
+
+        if (error) {
+           return  res.json({
+                            ok:false,
+                            mensaje:error
+                        })
+        }
+        res.json({
+            ok:true,
+            clientes: clientes
+        })
+ 
+    });
+})
+
+// obtener los id y sus nombres----
+router.get('/usuarios/detalle',( req : Request, res : Response)=>{
+
+   // utilizamos la misma instancia creada en los sockets
+   const user =  userConectados.getUsuarios();
+
+   console.log('usuarios2')
+   console.log(user)
+    res.json({
+        ok:true,
+        clientes : user
+    })
+})
  
 
 export default router;
