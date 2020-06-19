@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-
+import { EncuestaComponent } from './components/encuesta/encuesta.component';
 
 import { HttpClientModule } from '@angular/common/http'
 
@@ -12,14 +12,12 @@ const config: SocketIoConfig = { url: 'http://localhost:5000', options: {} };
 
  ///grafica
 import { ChartsModule } from 'ng2-charts';
-import { GraficaComponent } from './components/grafica/grafica.component';
-import { MapaComponent } from './components/mapa/mapa.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    GraficaComponent,
-    MapaComponent
+    EncuestaComponent
   ],
   imports: [
     BrowserModule,

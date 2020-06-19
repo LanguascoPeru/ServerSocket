@@ -1,22 +1,26 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit,OnDestroy, ViewChild  } from '@angular/core';
+
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, BaseChartDirective, Label } from 'ng2-charts';
-import * as pluginAnnotations from 'chartjs-plugin-annotation';
+ 
 
 import { HttpClient } from '@angular/common/http';
-import { WebsocketService } from '../../services/websocket.service';
+import { WebsocketService } from 'src/app/services/websocket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-grafica',
-  templateUrl: './grafica.component.html',
-  styleUrls: ['./grafica.component.css']
+  selector: 'app-encuesta',
+  templateUrl: './encuesta.component.html',
+  styleUrls: ['./encuesta.component.css']
 })
-export class GraficaComponent implements OnInit {
+export class EncuestaComponent implements OnInit, OnDestroy {
+
+  newEncuesta$: Subscription;
 
   public lineChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Ventas' },
+    { data: [2, 5, 8, 9,10], label: 'Encuentas' },
   ];
-  public lineChartLabels: Label[] = ['Enero', 'Febrero', 'Marzo', 'Abril' ];
+  public lineChartLabels: Label[] = ['pregunta 1','pregunta 2','pregunta 3','pregunta 4','pregunta 5'];
   
   public lineChartOptions: (ChartOptions & { annotation: any }) = {
     responsive: true,
@@ -60,34 +64,31 @@ export class GraficaComponent implements OnInit {
   };
  
  
-   public lineChartPlugins = [pluginAnnotations];
+ 
 
   @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
   constructor(private http: HttpClient, private websocketService : WebsocketService) { }
 
   ngOnInit() {
-     this.getDataGrafica();
-     this.dataGrafica();
+      this.getEncuestas();
+      this.getEncuestasSocket();
+  }
+
+  getEncuestas(){
+    this.http.get('http://localhost:5000/encuesta').subscribe((data:any)=>{
+      this.lineChartData =data;
+    })
+  }
+
+  getEncuestasSocket(){
+    this.newEncuesta$ =  this.websocketService.escucharEventos('new-encuestas').subscribe( (resp:any) =>{
+      this.lineChartData = resp;
+    })
   }
   
-  //cargar la informacion inicialmenteks
-  getDataGrafica(){
-   this.http.get('http://localhost:5000/grafica')
-       .subscribe((data:any)=> this.lineChartData = data )
+  ngOnDestroy(){
+    this.newEncuesta$.unsubscribe();
   }
 
-
-  /// Aqui esperamos que desde otro cliente nos actualice la informacion por m
-  /// medio de sockets
-
-
-  public dataGrafica(){
-       this.websocketService.escucharEventos('new-grafica').subscribe((data:any)=>{
-        this.lineChartData = data
-       })
-  }
-
- 
 }
- 
